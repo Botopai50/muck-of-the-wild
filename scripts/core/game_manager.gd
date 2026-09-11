@@ -205,6 +205,7 @@ func _apply_lighting_and_atmosphere(delta: float) -> void:
 			env.fog_density = lerpf(env.fog_density, target_fog_density, clampf(delta * 2.0, 0.0, 1.0))
 		env.ambient_light_energy = 1.0
 		env.fog_enabled = true
+		env.fog_sky_affect = 0.05
 		
 		# Sincronizar Céu Dinâmico BotW com a hora calculada
 		if env.sky and env.sky.sky_material is ShaderMaterial:
