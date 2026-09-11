@@ -1,0 +1,192 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/core/game_manager.gd" id="1_gm"]
+[ext_resource type="Script" path="res://scripts/core/enemy_spawner.gd" id="2_spwn"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="3_ply"]
+[ext_resource type="PackedScene" path="res://scenes/environment/tree.tscn" id="4_tree"]
+[ext_resource type="PackedScene" path="res://scenes/environment/rock.tscn" id="5_rock"]
+[ext_resource type="PackedScene" path="res://scenes/environment/chest.tscn" id="6_chest"]
+[ext_resource type="Material" path="res://materials/m_botw_grass.tres" id="7_grass"]
+[ext_resource type="Material" path="res://materials/m_botw_water.tres" id="8_water"]
+[ext_resource type="Material" path="res://materials/m_botw_sky.tres" id="9_sky"]
+
+[sub_resource type="Sky" id="Sky_botw"]
+sky_material = ExtResource("9_sky")
+
+[sub_resource type="Environment" id="Environment_botw"]
+background_mode = 2
+sky = SubResource("Sky_botw")
+ambient_light_source = 2
+ambient_light_color = Color(0.45, 0.58, 0.72, 1)
+tonemap_mode = 2
+fog_enabled = true
+fog_light_color = Color(0.72, 0.85, 0.98, 1)
+fog_density = 0.0012
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_island"]
+material = ExtResource("7_grass")
+top_radius = 75.0
+bottom_radius = 85.0
+height = 4.0
+radial_segments = 64
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_island"]
+height = 4.0
+radius = 80.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hill"]
+material = ExtResource("7_grass")
+top_radius = 8.0
+bottom_radius = 18.0
+height = 5.0
+radial_segments = 32
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_hill"]
+height = 5.0
+radius = 14.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ocean"]
+material = ExtResource("8_water")
+size = Vector2(600, 600)
+
+[node name="Main" type="Node3D"]
+
+[node name="GameManager" type="Node" parent="." groups=["game_manager"]]
+script = ExtResource("1_gm")
+sun_light = NodePath("../SunLight")
+world_environment = NodePath("../WorldEnvironment")
+player = NodePath("../Player")
+enemy_spawner = NodePath("../EnemySpawner")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_botw")
+
+[node name="SunLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.819152, -0.40558, 0.40558, 0, 0.707107, 0.707107, -0.573576, -0.579228, 0.579228, 0, 20, 0)
+light_color = Color(1, 0.98, 0.92, 1)
+light_energy = 1.25
+shadow_enabled = true
+
+[node name="EnemySpawner" type="Node3D" parent="."]
+script = ExtResource("2_spwn")
+player = NodePath("../Player")
+game_manager = NodePath("../GameManager")
+
+[node name="Terrain" type="Node3D" parent="."]
+
+[node name="MainIsland" type="StaticBody3D" parent="Terrain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+collision_layer = 1
+collision_mask = 3
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Terrain/MainIsland"]
+mesh = SubResource("CylinderMesh_island")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain/MainIsland"]
+shape = SubResource("CylinderShape3D_island")
+
+[node name="DistantHill" type="StaticBody3D" parent="Terrain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 3.5, -38)
+collision_layer = 1
+collision_mask = 3
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Terrain/DistantHill"]
+mesh = SubResource("CylinderMesh_hill")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain/DistantHill"]
+shape = SubResource("CylinderShape3D_hill")
+
+[node name="Ocean" type="MeshInstance3D" parent="Terrain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+mesh = SubResource("PlaneMesh_ocean")
+
+[node name="Player" parent="." instance=ExtResource("3_ply")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+
+[node name="Trees" type="Node3D" parent="."]
+
+[node name="Tree_1" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, -12, 2.0, -8)
+
+[node name="Tree_2" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -18, 2.0, 5)
+
+[node name="Tree_3" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -8, 2.0, 14)
+
+[node name="Tree_4" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(0.173648, 0, 0.984808, 0, 1, 0, -0.984808, 0, 0.173648, 10, 2.0, 12)
+
+[node name="Tree_5" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(-0.939693, 0, -0.34202, 0, 1, 0, 0.34202, 0, -0.939693, 15, 2.0, -6)
+
+[node name="Tree_6" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(0.642788, 0, -0.766044, 0, 1, 0, 0.766044, 0, 0.642788, 7, 2.0, -15)
+
+[node name="Tree_7" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(-0.087156, 0, 0.996195, 0, 1, 0, -0.996195, 0, -0.087156, -6, 2.0, -20)
+
+[node name="Tree_8" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(-0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, -0.939693, 22, 2.0, 4)
+
+[node name="Tree_9" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(-0.34202, 0, -0.939693, 0, 1, 0, 0.939693, 0, -0.34202, -22, 2.0, -14)
+
+[node name="Tree_10" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 14, 2.0, -22)
+
+[node name="Tree_11" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -15, 2.0, 22)
+
+[node name="Tree_12" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 5, 2.0, 24)
+
+[node name="Tree_13" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(-0.766044, 0, 0.642788, 0, 1, 0, -0.642788, 0, -0.766044, -25, 2.0, 2)
+
+[node name="Tree_14" parent="Trees" instance=ExtResource("4_tree")]
+transform = Transform3D(0.087156, 0, -0.996195, 0, 1, 0, 0.996195, 0, 0.087156, 26, 2.0, -12)
+
+[node name="Rocks" type="Node3D" parent="."]
+
+[node name="Rock_1" parent="Rocks" instance=ExtResource("5_rock")]
+transform = Transform3D(0.819152, 0, 0.573576, 0, 1, 0, -0.573576, 0, 0.819152, -14, 2.0, 8)
+
+[node name="Rock_2" parent="Rocks" instance=ExtResource("5_rock")]
+transform = Transform3D(-0.34202, 0, 0.939693, 0, 1, 0, -0.939693, 0, -0.34202, 16, 2.0, 10)
+
+[node name="Rock_3" parent="Rocks" instance=ExtResource("5_rock")]
+transform = Transform3D(-0.906308, 0, -0.422618, 0, 1, 0, 0.422618, 0, -0.906308, -9, 2.0, -12)
+
+[node name="Rock_4" parent="Rocks" instance=ExtResource("5_rock")]
+transform = Transform3D(0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, 0.258819, 12, 2.0, -10)
+
+[node name="Rock_5" parent="Rocks" instance=ExtResource("5_rock")]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -4, 2.0, 18)
+
+[node name="Rock_6" parent="Rocks" instance=ExtResource("5_rock")]
+transform = Transform3D(-0.819152, 0, 0.573576, 0, 1, 0, -0.573576, 0, -0.819152, 20, 2.0, -18)
+
+[node name="Rock_7" parent="Rocks" instance=ExtResource("5_rock")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -20, 2.0, -5)
+
+[node name="Rock_8" parent="Rocks" instance=ExtResource("5_rock")]
+transform = Transform3D(-0.766044, 0, -0.642788, 0, 1, 0, 0.642788, 0, -0.766044, 8, 2.0, -26)
+
+[node name="Chests" type="Node3D" parent="."]
+
+[node name="Chest_1" parent="Chests" instance=ExtResource("6_chest")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 2.0, 12)
+
+[node name="Chest_2" parent="Chests" instance=ExtResource("6_chest")]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -16, 2.0, -16)
+
+[node name="Chest_3" parent="Chests" instance=ExtResource("6_chest")]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, 18, 2.0, -14)
+
+[node name="Chest_4" parent="Chests" instance=ExtResource("6_chest")]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -12, 2.0, 18)
+
+[node name="Chest_5" parent="Chests" instance=ExtResource("6_chest")]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 22, 2.0, 16)
+

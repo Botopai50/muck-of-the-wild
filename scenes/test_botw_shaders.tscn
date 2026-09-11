@@ -1,0 +1,66 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://materials/m_botw_sky.tres" id="1_wyo18"]
+[ext_resource type="Material" path="res://materials/m_botw_cel_character.tres" id="2_1qum8"]
+[ext_resource type="Material" path="res://materials/m_botw_cel_rock.tres" id="3_8o3cm"]
+[ext_resource type="Material" path="res://materials/m_botw_foliage.tres" id="4_e54pu"]
+[ext_resource type="Material" path="res://materials/m_botw_grass.tres" id="5_7q38k"]
+[ext_resource type="Material" path="res://materials/m_botw_water.tres" id="6_44nnq"]
+
+[sub_resource type="Sky" id="Sky_ow4e1"]
+sky_material = ExtResource("1_wyo18")
+
+[sub_resource type="Environment" id="Environment_nmt5w"]
+background_mode = 2
+sky = SubResource("Sky_ow4e1")
+ambient_light_source = 3
+
+[sub_resource type="SphereMesh" id="SphereMesh_xvre0"]
+radial_segments = 32
+rings = 16
+
+[sub_resource type="BoxMesh" id="BoxMesh_efs8a"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_31rvr"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_24rkr"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_nfmx2"]
+size = Vector2(10, 10)
+subdivide_width = 16
+subdivide_depth = 16
+
+[node name="TestBotwShaders" type="Node3D" unique_id=1726235864]
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1643418228]
+transform = Transform3D(0.8660254, -0.35355338, 0.35355338, 0, 0.70710677, 0.70710677, -0.5, -0.6123724, 0.6123724, 0, 0, 0)
+light_color = Color(1, 0.95, 0.85, 1)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=943382874]
+environment = SubResource("Environment_nmt5w")
+
+[node name="CharacterSphere" type="MeshInstance3D" parent="." unique_id=1902798907]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 0)
+material_override = ExtResource("2_1qum8")
+mesh = SubResource("SphereMesh_xvre0")
+
+[node name="RockBox" type="MeshInstance3D" parent="." unique_id=566604635]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, 0)
+material_override = ExtResource("3_8o3cm")
+mesh = SubResource("BoxMesh_efs8a")
+
+[node name="FoliageCluster" type="MeshInstance3D" parent="." unique_id=834005985]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -2)
+material_override = ExtResource("4_e54pu")
+mesh = SubResource("SphereMesh_31rvr")
+
+[node name="GrassPlane" type="MeshInstance3D" parent="." unique_id=1523696929]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 1)
+material_override = ExtResource("5_7q38k")
+mesh = SubResource("QuadMesh_24rkr")
+
+[node name="WaterPlane" type="MeshInstance3D" parent="." unique_id=1183479051]
+material_override = ExtResource("6_44nnq")
+mesh = SubResource("PlaneMesh_nfmx2")

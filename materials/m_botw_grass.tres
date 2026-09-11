@@ -1,0 +1,32 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/botw_grass.gdshader" id="1_2aoq5"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_2aoq5")
+shader_parameter/color_root = Color(0.20, 0.42, 0.15, 1)
+shader_parameter/color_tip = Color(0.46, 0.68, 0.24, 1)
+shader_parameter/gradient_power = 1.0
+shader_parameter/alpha_scissor_threshold = null
+shader_parameter/invert_uv_height = null
+shader_parameter/use_vertex_y_for_height = null
+shader_parameter/grass_mesh_height = null
+shader_parameter/height_curve = null
+shader_parameter/wind_direction = Vector2(1, 0.3)
+shader_parameter/wind_speed = 2.2
+shader_parameter/wind_strength = 0.28
+shader_parameter/wind_scale = 0.12
+shader_parameter/wind_gust_strength = 0.15
+shader_parameter/wind_gust_speed = 1.2
+shader_parameter/wind_vertical_depression = 0.35
+shader_parameter/player_position = null
+shader_parameter/player_bend_radius = 1.5
+shader_parameter/player_bend_strength = 0.6
+shader_parameter/shadow_tint = Color(0.15, 0.28, 0.38, 1)
+shader_parameter/midtone_tint = Color(0.7, 0.85, 0.58, 1)
+shader_parameter/shadow_cut_mid = null
+shader_parameter/shadow_cut_bright = null
+shader_parameter/shadow_smoothness = null
+shader_parameter/transmission_color = Color(0.48, 0.82, 0.18, 1)
+shader_parameter/transmission_strength = 0.85

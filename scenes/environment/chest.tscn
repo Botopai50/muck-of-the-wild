@@ -1,0 +1,120 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/relic_chest.gd" id="1_cst"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cst"]
+size = Vector3(1.2, 0.8, 0.9)
+
+[sub_resource type="StandardMaterial3D" id="Mat_WoodChest"]
+albedo_color = Color(0.24, 0.15, 0.08, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_base"]
+material = SubResource("Mat_WoodChest")
+size = Vector3(1.1, 0.5, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Gold"]
+albedo_color = Color(0.9, 0.75, 0.15, 1)
+metallic = 0.85
+roughness = 0.25
+
+[sub_resource type="BoxMesh" id="BoxMesh_gold_trim"]
+material = SubResource("Mat_Gold")
+size = Vector3(1.12, 0.52, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_RuneCyan"]
+albedo_color = Color(0, 0.9, 1, 1)
+emission_enabled = true
+emission = Color(0, 0.9, 1, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_rune"]
+material = SubResource("Mat_RuneCyan")
+radius = 0.09
+height = 0.18
+
+[sub_resource type="BoxMesh" id="BoxMesh_lid"]
+material = SubResource("Mat_WoodChest")
+size = Vector3(1.1, 0.25, 0.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_latch"]
+material = SubResource("Mat_Gold")
+size = Vector3(0.18, 0.2, 0.08)
+
+[sub_resource type="StandardMaterial3D" id="Mat_RelicStar"]
+albedo_color = Color(1, 0.85, 0.2, 1)
+emission_enabled = true
+emission = Color(1, 0.8, 0.1, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_relic"]
+material = SubResource("Mat_RelicStar")
+radius = 0.25
+height = 0.5
+radial_segments = 6
+rings = 4
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_int"]
+radius = 2.8
+
+[node name="RelicChest" type="StaticBody3D"]
+collision_layer = 17
+collision_mask = 3
+script = ExtResource("1_cst")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("BoxShape3D_cst")
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = SubResource("BoxMesh_base")
+
+[node name="GoldTrim" type="MeshInstance3D" parent="Base"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.36)
+mesh = SubResource("BoxMesh_gold_trim")
+
+[node name="Rune" type="MeshInstance3D" parent="Base"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0.42)
+mesh = SubResource("SphereMesh_rune")
+
+[node name="LidPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.4)
+
+[node name="Lid" type="MeshInstance3D" parent="LidPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0.4)
+mesh = SubResource("BoxMesh_lid")
+
+[node name="Latch" type="MeshInstance3D" parent="LidPivot/Lid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0.42)
+mesh = SubResource("BoxMesh_latch")
+
+[node name="ChestLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+light_color = Color(1, 0.85, 0.3, 1)
+light_energy = 0.0
+omni_range = 4.0
+
+[node name="RelicVisual" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+visible = false
+
+[node name="StarMesh" type="MeshInstance3D" parent="RelicVisual"]
+mesh = SubResource("SphereMesh_relic")
+
+[node name="InteractArea" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("SphereShape3D_int")
+
+[node name="PromptLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+billboard = 1
+double_sided = false
+no_depth_test = true
+text = "[E] Abrir Baú de Relíquia"
+font_size = 32
+outline_size = 8

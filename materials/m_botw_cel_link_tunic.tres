@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/botw_cel.gdshader" id="1_cel"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_cel")
+shader_parameter/albedo_color = Color(0.12, 0.58, 0.86, 1)
+shader_parameter/shadow_tint = Color(0.18, 0.26, 0.46, 1)
+shader_parameter/midtone_tint = Color(0.48, 0.72, 0.92, 1)
+shader_parameter/shadow_cut_mid = 0.32
+shader_parameter/shadow_cut_bright = 0.68
+shader_parameter/shadow_smoothness = 0.05
+shader_parameter/rim_color = Color(0.8, 0.95, 1, 1)
+shader_parameter/rim_power = 2.6
+shader_parameter/rim_intensity = 0.95
+shader_parameter/rim_smoothness = 0.08
+shader_parameter/roughness_value = 0.65

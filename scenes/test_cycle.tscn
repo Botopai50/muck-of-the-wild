@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/main.tscn" id="1_main"]
+[ext_resource type="Script" path="res://scripts/core/test_cycle_runner.gd" id="2_runner"]
+
+[node name="TestCycle" instance=ExtResource("1_main")]
+script = ExtResource("2_runner")

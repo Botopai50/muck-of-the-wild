@@ -1,0 +1,38 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/botw_sky.gdshader" id="1_uwe3t"]
+
+[resource]
+shader = ExtResource("1_uwe3t")
+shader_parameter/use_light_direction = true
+shader_parameter/time_of_day = 12.0
+shader_parameter/dawn_zenith = Color(0.35, 0.42, 0.68, 1)
+shader_parameter/dawn_horizon = Color(0.98, 0.65, 0.38, 1)
+shader_parameter/dawn_haze = Color(1.0, 0.78, 0.52, 1)
+shader_parameter/noon_zenith = Color(0.16, 0.48, 0.88, 1)
+shader_parameter/noon_horizon = Color(0.62, 0.82, 0.94, 1)
+shader_parameter/noon_haze = Color(0.80, 0.92, 1.0, 1)
+shader_parameter/sunset_zenith = Color(0.22, 0.16, 0.42, 1)
+shader_parameter/sunset_horizon = Color(0.96, 0.38, 0.18, 1)
+shader_parameter/sunset_haze = Color(0.98, 0.52, 0.28, 1)
+shader_parameter/night_zenith = Color(0.015, 0.025, 0.08, 1)
+shader_parameter/night_horizon = Color(0.05, 0.08, 0.16, 1)
+shader_parameter/night_haze = Color(0.08, 0.12, 0.22, 1)
+shader_parameter/ground_color = Color(0.25, 0.45, 0.65, 1)
+shader_parameter/horizon_haze_intensity = 0.65
+shader_parameter/horizon_haze_exponent = 3.0
+shader_parameter/sun_color = Color(1.0, 0.96, 0.85, 1)
+shader_parameter/sun_disk_size = 0.018
+shader_parameter/sun_disk_smoothness = 0.002
+shader_parameter/star_density = 0.003
+shader_parameter/star_scale = 220.0
+shader_parameter/star_twinkle_speed = 3.0
+shader_parameter/star_intensity = 2.0
+shader_parameter/enable_clouds = true
+shader_parameter/cloud_color_lit = Color(1, 1, 1, 1)
+shader_parameter/cloud_color_shadow = Color(0.7, 0.78, 0.9, 1)
+shader_parameter/cloud_coverage = 0.48
+shader_parameter/cloud_softness = 0.14
+shader_parameter/cloud_speed = 0.05
+shader_parameter/cloud_scale = 1.0
+shader_parameter/cloud_direction = Vector2(1, 0.3)

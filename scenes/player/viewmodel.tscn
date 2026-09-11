@@ -1,0 +1,154 @@
+[gd_scene format=3 uid="uid://dviewmodel001"]
+
+[ext_resource type="Script" path="res://scripts/player/viewmodel.gd" id="1_viewm"]
+[ext_resource type="Material" path="res://materials/m_botw_cel_link_tunic.tres" id="2_tunic"]
+[ext_resource type="Material" path="res://materials/m_botw_cel_character.tres" id="3_skin"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_Skin"]
+albedo_color = Color(0.88, 0.70, 0.58, 1.0)
+roughness = 0.65
+
+[sub_resource type="StandardMaterial3D" id="Mat_Sleeve"]
+albedo_color = Color(0.24, 0.45, 0.72, 1.0)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_Wood"]
+albedo_color = Color(0.48, 0.32, 0.18, 1.0)
+roughness = 0.75
+
+[sub_resource type="StandardMaterial3D" id="Mat_Iron"]
+albedo_color = Color(0.68, 0.72, 0.78, 1.0)
+metallic = 0.85
+roughness = 0.25
+
+[sub_resource type="StandardMaterial3D" id="Mat_Gold"]
+albedo_color = Color(0.92, 0.75, 0.22, 1.0)
+metallic = 0.8
+roughness = 0.3
+
+[sub_resource type="StandardMaterial3D" id="Mat_Apple"]
+albedo_color = Color(0.85, 0.15, 0.15, 1.0)
+roughness = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_Arm"]
+size = Vector3(0.09, 0.09, 0.42)
+
+[sub_resource type="BoxMesh" id="BoxMesh_Hand"]
+size = Vector3(0.08, 0.07, 0.11)
+
+[sub_resource type="CylinderMesh" id="CylMesh_Handle"]
+top_radius = 0.018
+bottom_radius = 0.018
+height = 0.55
+
+[sub_resource type="BoxMesh" id="BoxMesh_AxeBlade"]
+size = Vector3(0.03, 0.14, 0.18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_PickHead"]
+size = Vector3(0.03, 0.08, 0.32)
+
+[sub_resource type="CylinderMesh" id="CylMesh_SwordHilt"]
+top_radius = 0.016
+bottom_radius = 0.016
+height = 0.22
+
+[sub_resource type="BoxMesh" id="BoxMesh_SwordGuard"]
+size = Vector3(0.18, 0.025, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_SwordBlade"]
+size = Vector3(0.025, 0.65, 0.07)
+
+[sub_resource type="SphereMesh" id="SphereMesh_Apple"]
+radius = 0.06
+height = 0.12
+
+[node name="Viewmodel" type="Node3D"]
+script = ExtResource("1_viewm")
+
+[node name="Arms" type="Node3D" parent="."]
+
+[node name="RightArm" type="Node3D" parent="Arms"]
+transform = Transform3D(0.984808, -0.173648, 0, 0.17101, 0.969846, -0.173648, 0.030154, 0.17101, 0.984808, 0.22, -0.22, -0.28)
+
+[node name="Sleeve" type="MeshInstance3D" parent="Arms/RightArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.15)
+mesh = SubResource("BoxMesh_Arm")
+surface_material_override/0 = ExtResource("2_tunic")
+
+[node name="Hand" type="MeshInstance3D" parent="Arms/RightArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.1)
+mesh = SubResource("BoxMesh_Hand")
+surface_material_override/0 = ExtResource("3_skin")
+
+[node name="LeftArm" type="Node3D" parent="Arms"]
+transform = Transform3D(0.965926, 0.258819, 0, -0.254887, 0.951251, -0.173648, -0.044944, 0.167731, 0.984808, -0.22, -0.24, -0.28)
+
+[node name="Sleeve" type="MeshInstance3D" parent="Arms/LeftArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.15)
+mesh = SubResource("BoxMesh_Arm")
+surface_material_override/0 = ExtResource("2_tunic")
+
+[node name="Hand" type="MeshInstance3D" parent="Arms/LeftArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.1)
+mesh = SubResource("BoxMesh_Hand")
+surface_material_override/0 = ExtResource("3_skin")
+
+[node name="Items" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, -0.20, -0.38)
+
+[node name="Fists" type="Node3D" parent="Items"]
+
+[node name="Axe" type="Node3D" parent="Items"]
+transform = Transform3D(0.965926, 0, 0.258819, -0.0669873, 0.965926, 0.25, -0.25, -0.258819, 0.933013, 0, 0.05, 0)
+visible = false
+
+[node name="Handle" type="MeshInstance3D" parent="Items/Axe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+mesh = SubResource("CylMesh_Handle")
+surface_material_override/0 = SubResource("Mat_Wood")
+
+[node name="Blade" type="MeshInstance3D" parent="Items/Axe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, -0.08)
+mesh = SubResource("BoxMesh_AxeBlade")
+surface_material_override/0 = SubResource("Mat_Iron")
+
+[node name="Pickaxe" type="Node3D" parent="Items"]
+transform = Transform3D(0.965926, 0, 0.258819, -0.0669873, 0.965926, 0.25, -0.25, -0.258819, 0.933013, 0, 0.05, 0)
+visible = false
+
+[node name="Handle" type="MeshInstance3D" parent="Items/Pickaxe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+mesh = SubResource("CylMesh_Handle")
+surface_material_override/0 = SubResource("Mat_Wood")
+
+[node name="PickHead" type="MeshInstance3D" parent="Items/Pickaxe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34, 0)
+mesh = SubResource("BoxMesh_PickHead")
+surface_material_override/0 = SubResource("Mat_Iron")
+
+[node name="Sword" type="Node3D" parent="Items"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 0.05, 0)
+visible = false
+
+[node name="Hilt" type="MeshInstance3D" parent="Items/Sword"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+mesh = SubResource("CylMesh_SwordHilt")
+surface_material_override/0 = SubResource("Mat_Wood")
+
+[node name="Guard" type="MeshInstance3D" parent="Items/Sword"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("BoxMesh_SwordGuard")
+surface_material_override/0 = SubResource("Mat_Gold")
+
+[node name="Blade" type="MeshInstance3D" parent="Items/Sword"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.40, 0)
+mesh = SubResource("BoxMesh_SwordBlade")
+surface_material_override/0 = SubResource("Mat_Iron")
+
+[node name="Food" type="Node3D" parent="Items"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+visible = false
+
+[node name="Apple" type="MeshInstance3D" parent="Items/Food"]
+mesh = SubResource("SphereMesh_Apple")
+surface_material_override/0 = SubResource("Mat_Apple")
