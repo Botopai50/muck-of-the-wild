@@ -96,14 +96,8 @@ func _setup_first_person_cam() -> void:
 	var player_node = main_scene.get_node_or_null("Player")
 	if player_node:
 		player_node.rotation_degrees.y = -35.0
-	var player_cam = main_scene.get_node_or_null("Player/Head/Camera3D")
-	if player_cam:
-		player_cam.make_current()
-		player_cam.fov = 75.0
-		player_cam.rotation_degrees = Vector3(-3.0, 0.0, 0.0)
-	var vm = main_scene.get_node_or_null("Player/Head/Camera3D/Viewmodel")
-	if vm:
-		vm.set_item(vm.ItemType.AXE)
+		if player_node.has_method("equip_slot"):
+			player_node.equip_slot(1) # Machado na hotbar e viewmodel
 
 func _setup_island_vista() -> void:
 	if not cam or not main_scene:
@@ -173,6 +167,9 @@ func _setup_resource_closeup() -> void:
 		gm._update_cycle_state(true)
 		gm._apply_lighting_and_atmosphere(1.0)
 		gm._notify_time_tick()
+	var hud = main_scene.get_node_or_null("Player/HUD")
+	if hud and "alert_banner_label" in hud and hud.alert_banner_label:
+		hud.alert_banner_label.visible = false
 	cam.make_current()
 	cam.global_position = Vector3(-10, 3.2, -5)
 	cam.look_at(Vector3(-12, 2.8, -8), Vector3.UP)
