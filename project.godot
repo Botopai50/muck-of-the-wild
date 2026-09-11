@@ -110,3 +110,4 @@ hotbar_5={
 
 renderer/rendering_method="forward_plus"
 renderer/rendering_method.mobile="forward_plus"
+renderer/rendering_method.web="gl_compatibility"

@@ -4,7 +4,7 @@
 
 [resource]
 shader = ExtResource("1_uwe3t")
-shader_parameter/use_light_direction = true
+shader_parameter/use_light_direction = false
 shader_parameter/time_of_day = 12.0
 shader_parameter/dawn_zenith = Color(0.35, 0.42, 0.68, 1)
 shader_parameter/dawn_horizon = Color(0.98, 0.65, 0.38, 1)

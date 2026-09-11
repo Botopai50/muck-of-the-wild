@@ -11,6 +11,7 @@
 [ext_resource type="Material" path="res://materials/m_botw_sky.tres" id="9_sky"]
 
 [sub_resource type="Sky" id="Sky_botw"]
+process_mode = 3
 sky_material = ExtResource("9_sky")
 
 [sub_resource type="Environment" id="Environment_botw"]

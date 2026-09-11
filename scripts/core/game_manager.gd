@@ -63,6 +63,15 @@ const COLOR_NIGHT_FOG := Color(0.08, 0.1, 0.2)
 const COLOR_NIGHT_AMBIENT := Color(0.12, 0.15, 0.26)
 
 func _ready() -> void:
+	if not world_environment:
+		world_environment = get_node_or_null("../WorldEnvironment")
+	if not sun_light:
+		sun_light = get_node_or_null("../SunLight")
+	if not player:
+		player = get_node_or_null("../Player")
+	if not enemy_spawner:
+		enemy_spawner = get_node_or_null("../EnemySpawner")
+
 	# Começar no início da manhã do Dia 1
 	cycle_elapsed = day_duration * 0.15
 	_update_cycle_state(true)
@@ -208,12 +217,15 @@ func _apply_lighting_and_atmosphere(delta: float) -> void:
 		env.fog_sky_affect = 0.05
 		
 		# Sincronizar Céu Dinâmico BotW com a hora calculada
-		if env.sky and env.sky.sky_material is ShaderMaterial:
-			var total_cycle := day_duration + night_duration
-			var prog := cycle_elapsed / total_cycle
-			var sim_hour: float = fmod(6.0 + prog * 24.0, 24.0)
-			env.sky.sky_material.set_shader_parameter("time_of_day", sim_hour)
-			env.sky.sky_material.set_shader_parameter("use_light_direction", false)
+		if env.sky:
+			env.sky.process_mode = Sky.PROCESS_MODE_REALTIME
+			if env.sky.sky_material is ShaderMaterial:
+				var total_cycle := day_duration + night_duration
+				var prog := cycle_elapsed / total_cycle
+				var sim_hour: float = fmod(6.0 + prog * 24.0, 24.0)
+				env.sky.sky_material.set_shader_parameter("time_of_day", sim_hour)
+				env.sky.sky_material.set_shader_parameter("use_light_direction", false)
+			# print("[GM] Setting time_of_day = ", sim_hour)
 
 func _notify_time_tick() -> void:
 	var total_cycle := day_duration + night_duration

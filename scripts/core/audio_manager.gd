@@ -63,6 +63,9 @@ static func play_sound_3d(sound_name: String, global_pos: Vector3, pitch_scale: 
 	p3d.finished.connect(p3d.queue_free)
 	p3d.play()
 
+static func get_sound_stream(sound_name: String) -> AudioStreamWAV:
+	return get_sound(sound_name)
+
 static func get_sound(sound_name: String) -> AudioStreamWAV:
 	if _cached_streams.has(sound_name):
 		return _cached_streams[sound_name]

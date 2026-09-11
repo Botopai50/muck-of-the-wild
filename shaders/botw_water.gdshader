@@ -1,4 +1,4 @@
-﻿shader_type spatial;
+shader_type spatial;
 render_mode blend_mix, depth_draw_always, cull_back;
 
 // ====================================================================
@@ -64,6 +64,9 @@ void fragment() {
 	float scene_depth = -upos.z / upos.w;
 	float surface_depth = -VERTEX.z;
 	float depth_diff = max(scene_depth - surface_depth, 0.0);
+	if (depth_raw < 0.0001 || depth_raw >= 0.9999) {
+		depth_diff = 999.0;
+	}
 
 	// Gradiente de cor de agua rasa -> agua profunda
 	float depth_factor = clamp(depth_diff / max(depth_distance, 0.01), 0.0, 1.0);
