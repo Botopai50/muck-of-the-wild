@@ -427,6 +427,9 @@ func _apply_game_feel(delta: float) -> void:
 # Hotbar & Viewmodel Interaction
 # ---------------------------------------------------------
 
+func equip_slot(index: int) -> void:
+	_select_slot(index)
+
 func _select_slot(index: int) -> void:
 	if index < 0 or index >= HOTBAR_ITEMS.size():
 		return
