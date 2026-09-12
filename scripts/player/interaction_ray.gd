@@ -12,6 +12,8 @@ signal hit_applied(target: Node3D, type: String, damage: float, hit_point: Vecto
 @export var max_interaction_distance: float = 3.5
 @export var player_reference: CharacterBody3D
 
+const HIT_SPARKS_SCENE = preload("res://scenes/vfx/hit_sparks.tscn")
+
 var current_target: Node3D = null
 var current_type: String = ""
 var current_prompt: String = ""
@@ -171,6 +173,14 @@ func apply_strike(tool_type: String, damage: float) -> bool:
 			if target.has_method("take_damage"):
 				target.take_damage(total_dmg, player_reference)
 			AudioManager.play_sound_3d("damage", hit_pos)
+			if HIT_SPARKS_SCENE:
+				var hs = HIT_SPARKS_SCENE.instantiate()
+				get_tree().current_scene.add_child(hs)
+				hs.global_position = hit_pos
+				if hs.has_method("setup"):
+					hs.setup(Color(1.0, 0.45, 0.2), hit_normal, 1.2)
+			if player_reference and player_reference.has_method("apply_camera_shake"):
+				player_reference.apply_camera_shake(0.25, 0.10)
 			hit_applied.emit(target, "enemy", total_dmg, hit_pos, hit_normal)
 			return true
 
@@ -179,5 +189,13 @@ func apply_strike(tool_type: String, damage: float) -> bool:
 			if target.has_method("take_hit"):
 				target.take_hit(damage, tool_type, hit_pos, hit_normal)
 			AudioManager.play_sound_3d("impact_stone", hit_pos, 0.1, -4.0)
+			if HIT_SPARKS_SCENE:
+				var hs = HIT_SPARKS_SCENE.instantiate()
+				get_tree().current_scene.add_child(hs)
+				hs.global_position = hit_pos
+				if hs.has_method("setup"):
+					hs.setup(Color(0.85, 0.9, 1.0), hit_normal, 0.75)
+			if player_reference and player_reference.has_method("apply_camera_shake"):
+				player_reference.apply_camera_shake(0.12, 0.06)
 			hit_applied.emit(target, "surface", damage, hit_pos, hit_normal)
 			return true

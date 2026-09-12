@@ -1,4 +1,4 @@
-﻿shader_type spatial;
+shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, cull_disabled;
 
 // ====================================================================
@@ -11,7 +11,8 @@ group_uniforms Color_Gradient;
 uniform vec4 color_root : source_color = vec4(0.12, 0.32, 0.10, 1.0);
 uniform vec4 color_tip : source_color = vec4(0.56, 0.86, 0.22, 1.0);
 uniform float gradient_power : hint_range(0.2, 4.0, 0.1) = 1.1;
-uniform sampler2D albedo_texture : source_color, filter_linear_mipmap, repeat_disable;
+uniform sampler2D albedo_texture : source_color, filter_linear_mipmap, repeat_disable, hint_default_white;
+uniform bool use_alpha_scissor = false;
 uniform float alpha_scissor_threshold : hint_range(0.0, 1.0, 0.01) = 0.5;
 
 group_uniforms Height_Settings;
@@ -68,9 +69,10 @@ void vertex() {
 	float gust = sin(world_pos.x * 0.15 + world_pos.z * 0.12 - TIME * wind_gust_speed) * wind_gust_strength;
 	float sway = (main_wave * wind_strength + gust) * pow(h_factor, height_curve);
 
-	VERTEX.x += norm_wind.x * sway;
-	VERTEX.z += norm_wind.y * sway;
-	VERTEX.y -= abs(sway) * wind_vertical_depression;
+	vec3 disp = vec3(0.0);
+	disp.x += norm_wind.x * sway;
+	disp.z += norm_wind.y * sway;
+	disp.y -= abs(sway) * wind_vertical_depression;
 
 	// Interacao / amassamento da grama sob os pes do jogador
 	if (player_bend_radius > 0.001) {
@@ -79,11 +81,14 @@ void vertex() {
 		if (dist < player_bend_radius && dist > 0.001) {
 			float push = (1.0 - dist / player_bend_radius) * player_bend_strength * pow(h_factor, height_curve);
 			vec2 push_dir = normalize(to_player.xz);
-			VERTEX.x += push_dir.x * push;
-			VERTEX.z += push_dir.y * push;
-			VERTEX.y -= push * 0.4;
+			disp.x += push_dir.x * push;
+			disp.z += push_dir.y * push;
+			disp.y -= push * 0.4;
 		}
 	}
+
+	mat3 inv_basis = inverse(mat3(MODEL_MATRIX));
+	VERTEX += inv_basis * disp;
 
 	// Normal voltada levemente para cima para suavizar a iluminacao nas campinas
 	NORMAL = normalize(mix(NORMAL, vec3(0.0, 1.0, 0.0), 0.6));
@@ -101,9 +106,11 @@ void fragment() {
 	// Subsurface scattering nativo para folhas finas de grama
 	BACKLIGHT = transmission_color.rgb * transmission_strength;
 
-	// Alpha scissor para laminas texturizadas
-	ALPHA = albedo_tex.a;
-	ALPHA_SCISSOR_THRESHOLD = alpha_scissor_threshold;
+	// Alpha scissor para laminas texturizadas se ativado
+	if (use_alpha_scissor) {
+		ALPHA = albedo_tex.a;
+		ALPHA_SCISSOR_THRESHOLD = alpha_scissor_threshold;
+	}
 }
 
 void light() {

@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/resource_node.gd" id="1_res"]
+[ext_resource type="PackedScene" path="res://assets/models/nature/BirchTree_Autumn_1.fbx" id="2_tree_mesh"]
+[ext_resource type="Material" path="res://materials/m_botw_foliage_autumn.tres" id="3_foliage_autumn"]
+[ext_resource type="PackedScene" path="res://scenes/vfx/falling_leaves.tscn" id="4_leaves"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_trunk"]
+height = 5.8
+radius = 0.55
+
+[node name="TreeAutumn" type="StaticBody3D" groups=["resources", "tree"]]
+collision_layer = 5
+collision_mask = 3
+script = ExtResource("1_res")
+foliage_material = ExtResource("3_foliage_autumn")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9, 0)
+shape = SubResource("CylinderShape3D_trunk")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="BirchTree_Autumn_1" parent="Visual" instance=ExtResource("2_tree_mesh")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
+
+[node name="FallingLeaves" parent="." instance=ExtResource("4_leaves")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, 0)

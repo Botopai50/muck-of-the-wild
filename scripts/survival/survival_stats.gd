@@ -1,4 +1,4 @@
-﻿class_name SurvivalStats
+class_name SurvivalStats
 extends Node
 
 ## Gerenciador de Atributos Vitais do Jogador (Vida, Fome, Estamina)

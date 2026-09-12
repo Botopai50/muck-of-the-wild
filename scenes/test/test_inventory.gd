@@ -1,4 +1,4 @@
-﻿extends SceneTree
+extends SceneTree
 
 func _init():
 	print("Starting Inventory System Verification...")

@@ -6,27 +6,31 @@ func _init():
 	print("--- Shaders & Materials Validator ---")
 	print("========================================")
 	
-	var shaders = [
-		"res://shaders/botw_cel.gdshader",
-		"res://shaders/botw_foliage.gdshader",
-		"res://shaders/botw_grass.gdshader",
-		"res://shaders/botw_water.gdshader",
-		"res://shaders/botw_sky.gdshader"
-	]
-	
-	var materials = [
-		"res://materials/m_botw_cel_default.tres",
-		"res://materials/m_botw_cel_character.tres",
-		"res://materials/m_botw_cel_rock.tres",
-		"res://materials/m_botw_foliage.tres",
-		"res://materials/m_botw_grass.tres",
-		"res://materials/m_botw_water.tres",
-		"res://materials/m_botw_sky.tres"
-	]
-	
+	var dir_shaders = DirAccess.open("res://shaders")
+	var shaders: Array[String] = []
+	if dir_shaders:
+		dir_shaders.list_dir_begin()
+		var file_name = dir_shaders.get_next()
+		while file_name != "":
+			if not dir_shaders.current_is_dir() and file_name.ends_with(".gdshader"):
+				shaders.append("res://shaders/" + file_name)
+			file_name = dir_shaders.get_next()
+	shaders.sort()
+
+	var dir_materials = DirAccess.open("res://materials")
+	var materials: Array[String] = []
+	if dir_materials:
+		dir_materials.list_dir_begin()
+		var file_name = dir_materials.get_next()
+		while file_name != "":
+			if not dir_materials.current_is_dir() and file_name.ends_with(".tres"):
+				materials.append("res://materials/" + file_name)
+			file_name = dir_materials.get_next()
+	materials.sort()
+
 	var has_errors = false
 	
-	print("\n[1] Verificando Shaders...")
+	print("\n[1] Verificando Shaders (%d encontrados)..." % shaders.size())
 	for s_path in shaders:
 		if not FileAccess.file_exists(s_path):
 			print("  [PENDING/MISSING] %s" % s_path)
@@ -43,7 +47,7 @@ func _init():
 				print("  [ERROR] Falha ao atribuir shader: %s" % s_path)
 				has_errors = true
 	
-	print("\n[2] Verificando Materiais...")
+	print("\n[2] Verificando Materiais (%d encontrados)..." % materials.size())
 	for m_path in materials:
 		if not FileAccess.file_exists(m_path):
 			print("  [PENDING/MISSING] %s" % m_path)
@@ -61,6 +65,6 @@ func _init():
 		print("========================================")
 		quit(1)
 	else:
-		print("STATUS: SUCESSO!")
+		print("STATUS: SUCESSO COMPLETO!")
 		print("========================================")
 		quit(0)

@@ -1,0 +1,25 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/botw_foliage.gdshader" id="1_schls"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_schls")
+shader_parameter/albedo_color = Color(0.92, 0.65, 0.18, 1)
+shader_parameter/top_tint = Color(0.98, 0.82, 0.25, 1)
+shader_parameter/bottom_tint = Color(0.68, 0.35, 0.12, 1)
+shader_parameter/vertical_gradient_power = 1.2
+shader_parameter/cluster_center_offset = Vector3(0, 3.8, 0)
+shader_parameter/spherical_normal_strength = 0.85
+shader_parameter/wind_direction = Vector2(1, 0.5)
+shader_parameter/wind_speed = 1.8
+shader_parameter/wind_strength = 0.18
+shader_parameter/flutter_speed = 6.0
+shader_parameter/flutter_strength = 0.04
+shader_parameter/shadow_tint = Color(0.38, 0.22, 0.14, 1)
+shader_parameter/midtone_tint = Color(0.92, 0.75, 0.45, 1)
+shader_parameter/transmission_color = Color(0.95, 0.75, 0.2, 1)
+shader_parameter/transmission_strength = 0.85
+shader_parameter/rim_color = Color(1, 0.92, 0.65, 1)
+shader_parameter/rim_power = 3.0
+shader_parameter/rim_intensity = 0.55

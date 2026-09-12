@@ -5,9 +5,10 @@
 [resource]
 render_priority = 0
 shader = ExtResource("1_2aoq5")
-shader_parameter/color_root = Color(0.20, 0.42, 0.15, 1)
-shader_parameter/color_tip = Color(0.46, 0.68, 0.24, 1)
-shader_parameter/gradient_power = 1.0
+shader_parameter/color_root = Color(0.11, 0.32, 0.1, 1)
+shader_parameter/color_tip = Color(0.58, 0.88, 0.2, 1)
+shader_parameter/gradient_power = 1.15
+shader_parameter/use_alpha_scissor = null
 shader_parameter/alpha_scissor_threshold = null
 shader_parameter/invert_uv_height = null
 shader_parameter/use_vertex_y_for_height = null

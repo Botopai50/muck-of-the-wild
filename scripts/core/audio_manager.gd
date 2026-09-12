@@ -1,8 +1,9 @@
 class_name AudioManager
 extends Node
 
-## Gerenciador Central de Efeitos Sonoros e Síntese de Áudio
-## Permite tocar efeitos procedurais em 2D/UI e no espaço 3D
+## Gerenciador Central de Efeitos Sonoros e Síntese de Áudio para Muck of the Wild
+## Integração direta com AudioSynth para síntese procedural de alta fidelidade
+## com harmônicos ricos, reverberação simulada e decaimento orgânico.
 
 static var _cached_streams: Dictionary = {}
 
@@ -39,6 +40,7 @@ static func play_sound(arg1, arg2 = null, arg3 = null, arg4 = null) -> void:
 		return
 
 	var p = AudioStreamPlayer.new()
+	p.bus = &"Master"
 	p.stream = stream
 	p.pitch_scale = pitch_scale
 	p.volume_db = volume_db
@@ -54,10 +56,11 @@ static func play_sound_3d(sound_name: String, global_pos: Vector3, pitch_scale: 
 	if not stream:
 		return
 	var p3d = AudioStreamPlayer3D.new()
+	p3d.bus = &"Master"
 	p3d.stream = stream
 	p3d.pitch_scale = pitch_scale
 	p3d.volume_db = volume_db
-	p3d.max_distance = 40.0
+	p3d.max_distance = 45.0
 	tree.root.add_child(p3d)
 	p3d.global_position = global_pos
 	p3d.finished.connect(p3d.queue_free)
@@ -71,26 +74,41 @@ static func get_sound(sound_name: String) -> AudioStreamWAV:
 		return _cached_streams[sound_name]
 	
 	var stream: AudioStreamWAV = null
+	
+	# Mapeamento para os 8 efeitos aprimorados e utilitários
 	match sound_name:
+		"footstep_grass", "footstep", "step":
+			stream = AudioSynth.create_sound("footstep_grass")
+		"jump", "player_jump":
+			stream = AudioSynth.create_sound("jump")
+		"weapon_swing", "swing", "slash":
+			stream = AudioSynth.create_sound("weapon_swing")
+		"impact_wood", "wood_chop", "chop":
+			stream = AudioSynth.create_sound("impact_wood")
+		"impact_stone", "rock_mine", "mine", "clink":
+			stream = AudioSynth.create_sound("impact_stone")
+		"chest_open", "fanfare", "relic", "relic_pickup":
+			stream = AudioSynth.create_sound("chest_open")
+		"hit", "enemy_hit", "damage":
+			stream = AudioSynth.create_sound("hit")
+		"golem_slam":
+			stream = AudioSynth.create_sound("golem_slam")
+		"golem_step":
+			stream = AudioSynth.create_sound("golem_step")
+		"golem_throw":
+			stream = AudioSynth.create_sound("golem_throw")
+		"rock_break", "break":
+			stream = AudioSynth.create_sound("rock_break")
 		"craft", "craft_success":
 			stream = _synth_craft_sound()
-		"chop", "wood_chop":
-			stream = _synth_chop_sound()
-		"mine", "rock_mine":
-			stream = _synth_mine_sound()
-		"pickup", "item_pickup":
-			stream = _synth_pickup_sound()
 		"eat", "eat_food":
 			stream = _synth_eat_sound()
 		"tree_fall":
 			stream = _synth_tree_fall_sound()
-		"rock_break", "break":
-			stream = _synth_rock_break_sound()
-		"relic", "relic_pickup":
-			stream = _synth_relic_sound()
 		_:
-			stream = _synth_pickup_sound()
-	
+			# Fallback para o AudioSynth central
+			stream = AudioSynth.create_sound(sound_name)
+
 	if stream:
 		_cached_streams[sound_name] = stream
 	return stream
@@ -112,78 +130,8 @@ static func _synth_craft_sound() -> AudioStreamWAV:
 		var env = exp(-note_t * 9.0)
 		var val = (sin(note_t * freq * TAU) + 0.35 * sin(note_t * freq * 2.0 * TAU)) * env * (1.0 - t / duration)
 		var ival = clampi(int(val * 24000.0), -32768, 32767)
-		var uval = ival if ival >= 0 else 65536 + ival
-		data[i * 2] = uval & 0xFF
-		data[i * 2 + 1] = (uval >> 8) & 0xFF
+		data.encode_s16(i * 2, ival)
 	
-	var s = AudioStreamWAV.new()
-	s.format = AudioStreamWAV.FORMAT_16_BITS
-	s.mix_rate = sample_rate
-	s.stereo = false
-	s.data = data
-	return s
-
-static func _synth_chop_sound() -> AudioStreamWAV:
-	var sample_rate = 22050
-	var duration = 0.18
-	var sample_count = int(sample_rate * duration)
-	var data = PackedByteArray()
-	data.resize(sample_count * 2)
-	for i in range(sample_count):
-		var t = float(i) / float(sample_rate)
-		var env = exp(-t * 26.0)
-		var thud = sin(t * (130.0 - t * 250.0) * TAU)
-		var noise = (randf() * 2.0 - 1.0) * exp(-t * 40.0)
-		var val = (thud * 0.7 + noise * 0.5) * env
-		var ival = clampi(int(val * 26000.0), -32768, 32767)
-		var uval = ival if ival >= 0 else 65536 + ival
-		data[i * 2] = uval & 0xFF
-		data[i * 2 + 1] = (uval >> 8) & 0xFF
-	var s = AudioStreamWAV.new()
-	s.format = AudioStreamWAV.FORMAT_16_BITS
-	s.mix_rate = sample_rate
-	s.stereo = false
-	s.data = data
-	return s
-
-static func _synth_mine_sound() -> AudioStreamWAV:
-	var sample_rate = 22050
-	var duration = 0.2
-	var sample_count = int(sample_rate * duration)
-	var data = PackedByteArray()
-	data.resize(sample_count * 2)
-	for i in range(sample_count):
-		var t = float(i) / float(sample_rate)
-		var env = exp(-t * 22.0)
-		var ring = (sin(t * 880.0 * TAU) + 0.4 * sin(t * 1760.0 * TAU)) * exp(-t * 16.0)
-		var crack = (randf() * 2.0 - 1.0) * exp(-t * 38.0)
-		var val = (ring * 0.6 + crack * 0.5) * env
-		var ival = clampi(int(val * 26000.0), -32768, 32767)
-		var uval = ival if ival >= 0 else 65536 + ival
-		data[i * 2] = uval & 0xFF
-		data[i * 2 + 1] = (uval >> 8) & 0xFF
-	var s = AudioStreamWAV.new()
-	s.format = AudioStreamWAV.FORMAT_16_BITS
-	s.mix_rate = sample_rate
-	s.stereo = false
-	s.data = data
-	return s
-
-static func _synth_pickup_sound() -> AudioStreamWAV:
-	var sample_rate = 22050
-	var duration = 0.16
-	var sample_count = int(sample_rate * duration)
-	var data = PackedByteArray()
-	data.resize(sample_count * 2)
-	for i in range(sample_count):
-		var t = float(i) / float(sample_rate)
-		var env = exp(-t * 18.0)
-		var freq = 987.77 if t < 0.07 else 1318.51
-		var val = sin(t * freq * TAU) * env
-		var ival = clampi(int(val * 24000.0), -32768, 32767)
-		var uval = ival if ival >= 0 else 65536 + ival
-		data[i * 2] = uval & 0xFF
-		data[i * 2 + 1] = (uval >> 8) & 0xFF
 	var s = AudioStreamWAV.new()
 	s.format = AudioStreamWAV.FORMAT_16_BITS
 	s.mix_rate = sample_rate
@@ -204,9 +152,7 @@ static func _synth_eat_sound() -> AudioStreamWAV:
 		var bite = sin(t * 320.0 * TAU) * 0.4
 		var val = (noise * 0.6 + bite) * env
 		var ival = clampi(int(val * 23000.0), -32768, 32767)
-		var uval = ival if ival >= 0 else 65536 + ival
-		data[i * 2] = uval & 0xFF
-		data[i * 2 + 1] = (uval >> 8) & 0xFF
+		data.encode_s16(i * 2, ival)
 	var s = AudioStreamWAV.new()
 	s.format = AudioStreamWAV.FORMAT_16_BITS
 	s.mix_rate = sample_rate
@@ -227,54 +173,7 @@ static func _synth_tree_fall_sound() -> AudioStreamWAV:
 		var noise = (randf() * 2.0 - 1.0) * (0.3 + 0.5 * (1.0 - t / duration))
 		var val = (creak * 0.5 + noise * 0.5) * env
 		var ival = clampi(int(val * 28000.0), -32768, 32767)
-		var uval = ival if ival >= 0 else 65536 + ival
-		data[i * 2] = uval & 0xFF
-		data[i * 2 + 1] = (uval >> 8) & 0xFF
-	var s = AudioStreamWAV.new()
-	s.format = AudioStreamWAV.FORMAT_16_BITS
-	s.mix_rate = sample_rate
-	s.stereo = false
-	s.data = data
-	return s
-
-static func _synth_rock_break_sound() -> AudioStreamWAV:
-	var sample_rate = 22050
-	var duration = 0.35
-	var sample_count = int(sample_rate * duration)
-	var data = PackedByteArray()
-	data.resize(sample_count * 2)
-	for i in range(sample_count):
-		var t = float(i) / float(sample_rate)
-		var env = exp(-t * 9.0)
-		var noise = (randf() * 2.0 - 1.0) * exp(-t * 11.0)
-		var low = sin(t * 65.0 * TAU) * exp(-t * 7.0)
-		var val = (noise * 0.6 + low * 0.6) * env
-		var ival = clampi(int(val * 27000.0), -32768, 32767)
-		var uval = ival if ival >= 0 else 65536 + ival
-		data[i * 2] = uval & 0xFF
-		data[i * 2 + 1] = (uval >> 8) & 0xFF
-	var s = AudioStreamWAV.new()
-	s.format = AudioStreamWAV.FORMAT_16_BITS
-	s.mix_rate = sample_rate
-	s.stereo = false
-	s.data = data
-	return s
-
-static func _synth_relic_sound() -> AudioStreamWAV:
-	var sample_rate = 22050
-	var duration = 0.7
-	var sample_count = int(sample_rate * duration)
-	var data = PackedByteArray()
-	data.resize(sample_count * 2)
-	for i in range(sample_count):
-		var t = float(i) / float(sample_rate)
-		var env = exp(-t * 3.5)
-		var shimmer = sin(t * 1174.66 * TAU) * 0.5 + sin(t * 1760.0 * TAU) * 0.3
-		var val = shimmer * env
-		var ival = clampi(int(val * 24000.0), -32768, 32767)
-		var uval = ival if ival >= 0 else 65536 + ival
-		data[i * 2] = uval & 0xFF
-		data[i * 2 + 1] = (uval >> 8) & 0xFF
+		data.encode_s16(i * 2, ival)
 	var s = AudioStreamWAV.new()
 	s.format = AudioStreamWAV.FORMAT_16_BITS
 	s.mix_rate = sample_rate

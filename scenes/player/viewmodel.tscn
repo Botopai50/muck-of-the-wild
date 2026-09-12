@@ -3,35 +3,36 @@
 [ext_resource type="Script" path="res://scripts/player/viewmodel.gd" id="1_viewm"]
 [ext_resource type="Material" path="res://materials/m_botw_cel_link_tunic.tres" id="2_tunic"]
 [ext_resource type="Material" path="res://materials/m_botw_cel_character.tres" id="3_skin"]
-
-[sub_resource type="StandardMaterial3D" id="Mat_Skin"]
-albedo_color = Color(0.88, 0.70, 0.58, 1.0)
-roughness = 0.65
-
-[sub_resource type="StandardMaterial3D" id="Mat_Sleeve"]
-albedo_color = Color(0.24, 0.45, 0.72, 1.0)
-roughness = 0.8
+[ext_resource type="Material" path="res://materials/m_botw_cel_leather.tres" id="4_leather"]
+[ext_resource type="Material" path="res://materials/m_botw_cel_white_trim.tres" id="5_trim"]
+[ext_resource type="PackedScene" path="res://scenes/vfx/slash_trail.tscn" id="6_trail"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_Wood"]
-albedo_color = Color(0.48, 0.32, 0.18, 1.0)
+albedo_color = Color(0.48, 0.32, 0.18, 1)
 roughness = 0.75
 
 [sub_resource type="StandardMaterial3D" id="Mat_Iron"]
-albedo_color = Color(0.68, 0.72, 0.78, 1.0)
+albedo_color = Color(0.68, 0.72, 0.78, 1)
 metallic = 0.85
 roughness = 0.25
 
 [sub_resource type="StandardMaterial3D" id="Mat_Gold"]
-albedo_color = Color(0.92, 0.75, 0.22, 1.0)
+albedo_color = Color(0.92, 0.75, 0.22, 1)
 metallic = 0.8
 roughness = 0.3
 
 [sub_resource type="StandardMaterial3D" id="Mat_Apple"]
-albedo_color = Color(0.85, 0.15, 0.15, 1.0)
+albedo_color = Color(0.85, 0.15, 0.15, 1)
 roughness = 0.3
 
-[sub_resource type="BoxMesh" id="BoxMesh_Arm"]
-size = Vector3(0.09, 0.09, 0.42)
+[sub_resource type="BoxMesh" id="BoxMesh_Sleeve"]
+size = Vector3(0.092, 0.092, 0.28)
+
+[sub_resource type="BoxMesh" id="BoxMesh_Cuff"]
+size = Vector3(0.096, 0.096, 0.035)
+
+[sub_resource type="BoxMesh" id="BoxMesh_Bracer"]
+size = Vector3(0.094, 0.094, 0.1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_Hand"]
 size = Vector3(0.08, 0.07, 0.11)
@@ -65,18 +66,31 @@ height = 0.12
 [node name="Viewmodel" type="Node3D"]
 script = ExtResource("1_viewm")
 
+[node name="SlashTrail" parent="." instance=ExtResource("6_trail")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, -0.06, -0.42)
+
 [node name="Arms" type="Node3D" parent="."]
 
 [node name="RightArm" type="Node3D" parent="Arms"]
 transform = Transform3D(0.984808, -0.173648, 0, 0.17101, 0.969846, -0.173648, 0.030154, 0.17101, 0.984808, 0.22, -0.22, -0.28)
 
 [node name="Sleeve" type="MeshInstance3D" parent="Arms/RightArm"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.15)
-mesh = SubResource("BoxMesh_Arm")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.18)
+mesh = SubResource("BoxMesh_Sleeve")
 surface_material_override/0 = ExtResource("2_tunic")
 
+[node name="Cuff" type="MeshInstance3D" parent="Arms/RightArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.04)
+mesh = SubResource("BoxMesh_Cuff")
+surface_material_override/0 = ExtResource("5_trim")
+
+[node name="Bracer" type="MeshInstance3D" parent="Arms/RightArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.03)
+mesh = SubResource("BoxMesh_Bracer")
+surface_material_override/0 = ExtResource("4_leather")
+
 [node name="Hand" type="MeshInstance3D" parent="Arms/RightArm"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.13)
 mesh = SubResource("BoxMesh_Hand")
 surface_material_override/0 = ExtResource("3_skin")
 
@@ -84,17 +98,27 @@ surface_material_override/0 = ExtResource("3_skin")
 transform = Transform3D(0.965926, 0.258819, 0, -0.254887, 0.951251, -0.173648, -0.044944, 0.167731, 0.984808, -0.22, -0.24, -0.28)
 
 [node name="Sleeve" type="MeshInstance3D" parent="Arms/LeftArm"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.15)
-mesh = SubResource("BoxMesh_Arm")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.18)
+mesh = SubResource("BoxMesh_Sleeve")
 surface_material_override/0 = ExtResource("2_tunic")
 
+[node name="Cuff" type="MeshInstance3D" parent="Arms/LeftArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.04)
+mesh = SubResource("BoxMesh_Cuff")
+surface_material_override/0 = ExtResource("5_trim")
+
+[node name="Bracer" type="MeshInstance3D" parent="Arms/LeftArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.03)
+mesh = SubResource("BoxMesh_Bracer")
+surface_material_override/0 = ExtResource("4_leather")
+
 [node name="Hand" type="MeshInstance3D" parent="Arms/LeftArm"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.13)
 mesh = SubResource("BoxMesh_Hand")
 surface_material_override/0 = ExtResource("3_skin")
 
 [node name="Items" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, -0.20, -0.38)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, -0.2, -0.38)
 
 [node name="Fists" type="Node3D" parent="Items"]
 
@@ -141,12 +165,11 @@ mesh = SubResource("BoxMesh_SwordGuard")
 surface_material_override/0 = SubResource("Mat_Gold")
 
 [node name="Blade" type="MeshInstance3D" parent="Items/Sword"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.40, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 mesh = SubResource("BoxMesh_SwordBlade")
 surface_material_override/0 = SubResource("Mat_Iron")
 
 [node name="Food" type="Node3D" parent="Items"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 visible = false
 
 [node name="Apple" type="MeshInstance3D" parent="Items/Food"]

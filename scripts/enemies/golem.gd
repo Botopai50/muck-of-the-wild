@@ -1,8 +1,10 @@
 class_name Golem
 extends CharacterBody3D
 
-## Mini-chefe noturno de Muck: Golem colossal de pedra ancestral
-## Executa passos pesados, golpe esmagador com onda de choque e arremesso de pedras
+## Mini-chefe Noturno Colossal de Muck of the Wild (Zelda BotW x Muck)
+## Esculpido em pedra ancestral Sheikah com runas ciano emissivas pulsantes.
+## Executa passos sísmicos com tremor de tela, golpe esmagador com onda de choque
+## expansiva e arremesso de pedregulho gigante com rastro de poeira.
 
 signal died(golem)
 
@@ -18,12 +20,12 @@ enum State {
 }
 
 @export_group("Atributos de Chefe")
-@export var max_health: float = 450.0
-@export var current_health: float = 450.0
-@export var move_speed: float = 3.8
-@export var slam_damage: float = 45.0
-@export var throw_damage: float = 32.0
-@export var detection_range: float = 45.0
+@export var max_health: float = 480.0
+@export var current_health: float = 480.0
+@export var move_speed: float = 4.0
+@export var slam_damage: float = 48.0
+@export var throw_damage: float = 34.0
+@export var detection_range: float = 48.0
 
 @onready var visual_root: Node3D = $Visuals
 @onready var torso: Node3D = $Visuals/Torso
@@ -37,7 +39,7 @@ enum State {
 
 var current_state: State = State.CHASE
 var target_player: Node3D = null
-var gravity: float = 22.0
+var gravity: float = 24.0
 var knockback_velocity: Vector3 = Vector3.ZERO
 
 var slam_cooldown: float = 2.0
@@ -55,8 +57,8 @@ func _ready() -> void:
 	
 	var gm := get_tree().get_first_node_in_group("game_manager") as GameManager
 	if gm:
-		var hp_mult := gm.get_enemy_health_multiplier() * 1.2
-		var dmg_mult := gm.get_enemy_damage_multiplier() * 1.15
+		var hp_mult := gm.get_enemy_health_multiplier() * 1.25
+		var dmg_mult := gm.get_enemy_damage_multiplier() * 1.20
 		max_health *= hp_mult
 		current_health = max_health
 		slam_damage *= dmg_mult
@@ -67,11 +69,11 @@ func _ready() -> void:
 		health_bar.value = current_health
 
 func _cache_meshes(node: Node) -> void:
-	var rock_mat = load("res://materials/m_botw_cel_rock.tres")
+	var sheikah_mat = load("res://materials/m_golem_sheikah_stone.tres")
 	if node is MeshInstance3D:
 		mesh_instances.append(node)
-		if rock_mat and not node.name.begins_with("Eye"):
-			node.set_surface_override_material(0, rock_mat)
+		if sheikah_mat and not node.name.begins_with("Eye") and not node.name.begins_with("Rune"):
+			node.set_surface_override_material(0, sheikah_mat)
 	for child in node.get_children():
 		_cache_meshes(child)
 
@@ -86,11 +88,11 @@ func _physics_process(delta: float) -> void:
 		if knockback_velocity.y < 0.0:
 			knockback_velocity.y = 0.0
 			
-	# Processar knockback reduzido (resiste 90% do recuo)
+	# Processar knockback reduzido (resiste 92% do impacto devido à massa colossal)
 	if knockback_velocity.length() > 0.1:
 		velocity.x = knockback_velocity.x
 		velocity.z = knockback_velocity.z
-		knockback_velocity = knockback_velocity.move_toward(Vector3.ZERO, delta * 25.0)
+		knockback_velocity = knockback_velocity.move_toward(Vector3.ZERO, delta * 28.0)
 	else:
 		if not is_acting:
 			_process_boss_ai(delta)
@@ -122,37 +124,37 @@ func _process_boss_ai(delta: float) -> void:
 	
 	if dir.length_squared() > 0.001:
 		var target_yaw := atan2(-dir.x, -dir.z)
-		rotation.y = lerp_angle(rotation.y, target_yaw, delta * 4.5)
+		rotation.y = lerp_angle(rotation.y, target_yaw, delta * 4.8)
 		
-	# Decisão de Habilidade: Golpe Esmagador corpo a corpo
-	if dist <= 6.2 and slam_cooldown <= 0.0:
+	# Decisão de Habilidade: Golpe Esmagador no Chão
+	if dist <= 6.5 and slam_cooldown <= 0.0:
 		_perform_ground_slam()
 		return
 		
-	# Decisão de Habilidade: Arremesso de Pedra à distância
-	if dist > 7.5 and dist < 28.0 and throw_cooldown <= 0.0 and randf() < 0.35:
+	# Decisão de Habilidade: Arremesso de Pedregulho à distância
+	if dist > 7.5 and dist < 32.0 and throw_cooldown <= 0.0 and randf() < 0.4:
 		_perform_rock_throw()
 		return
 		
-	# Movimento pesado em direção ao jogador
+	# Movimento pesado de aproximação
 	velocity.x = dir.x * move_speed
 	velocity.z = dir.z * move_speed
 	
-	# Passos sonoros e tremor de tela
+	# Passos sísmicos e tremor de tela
 	step_timer += delta
-	if step_timer >= 0.75:
+	if step_timer >= 0.72:
 		step_timer = 0.0
 		_trigger_footstep()
 
 func _trigger_footstep() -> void:
-	AudioSynth.play_sound(self, "golem_step", 3.0, randf_range(0.85, 1.05))
+	AudioSynth.play_sound(self, "golem_step", 4.0, randf_range(0.85, 1.05))
 	if target_player and is_instance_valid(target_player):
 		var dist := global_position.distance_to(target_player.global_position)
-		if dist < 16.0 and target_player.has_method("apply_camera_shake"):
-			var intensity := (1.0 - dist / 16.0) * 0.4
-			target_player.apply_camera_shake(intensity, 0.25)
+		if dist < 18.0 and target_player.has_method("apply_camera_shake"):
+			var intensity := (1.0 - dist / 18.0) * 0.45
+			target_player.apply_camera_shake(intensity, 0.28)
 
-## 1. Golpe Esmagador no Chão gerando Onda de Choque
+## 1. Golpe Esmagador no Chão gerando Onda de Choque e Tremor Massivo
 func _perform_ground_slam() -> void:
 	is_acting = true
 	current_state = State.SLAM_WINDUP
@@ -161,27 +163,27 @@ func _perform_ground_slam() -> void:
 	slam_cooldown = randf_range(4.5, 6.0)
 	
 	var tween := create_tween()
-	# Levantar ambos os punhos colossais no ar
-	tween.tween_property(arm_l, "rotation_degrees:x", -110.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(arm_r, "rotation_degrees:x", -110.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(torso, "position:y", 1.9, 0.7)
+	# Erguer ambos os punhos colossais no alto
+	tween.tween_property(arm_l, "rotation_degrees:x", -115.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(arm_r, "rotation_degrees:x", -115.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(torso, "position:y", 2.0, 0.7)
 	
-	# Pausa de suspense no topo
-	tween.tween_interval(0.2)
+	# Pausa tensa no ápice
+	tween.tween_interval(0.18)
 	
-	# Esmagar com violência no chão!
+	# Despencar com força sísmica contra o solo
 	tween.tween_callback(func(): current_state = State.SLAM_EXECUTE)
-	tween.tween_property(arm_l, "rotation_degrees:x", 70.0, 0.16).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(arm_r, "rotation_degrees:x", 70.0, 0.16).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(torso, "position:y", 1.3, 0.16)
+	tween.tween_property(arm_l, "rotation_degrees:x", 75.0, 0.15).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(arm_r, "rotation_degrees:x", 75.0, 0.15).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(torso, "position:y", 1.3, 0.15)
 	
-	# Impacto no chão: som estrondoso, tremor violento e onda de choque!
+	# Impacto estrondoso, tremor violento e onda de choque!
 	tween.tween_callback(func():
 		_execute_ground_slam_impact()
 	)
 	
-	# Recuperação
-	tween.tween_interval(0.5)
+	# Recuperação pós-golpe
+	tween.tween_interval(0.55)
 	tween.tween_property(arm_l, "rotation_degrees:x", 0.0, 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(arm_r, "rotation_degrees:x", 0.0, 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(torso, "position:y", 1.6, 0.4)
@@ -191,24 +193,25 @@ func _perform_ground_slam() -> void:
 	)
 
 func _execute_ground_slam_impact() -> void:
-	AudioSynth.play_sound(self, "golem_slam", 6.0, 0.8)
+	AudioSynth.play_sound(self, "golem_slam", 7.0, 0.82)
 	
 	if target_player and is_instance_valid(target_player):
 		var dist := global_position.distance_to(target_player.global_position)
 		if target_player.has_method("apply_camera_shake"):
-			target_player.apply_camera_shake(1.0, 0.6)
+			var shake_mag := clampf(1.4 - (dist / 20.0), 0.4, 1.4)
+			target_player.apply_camera_shake(shake_mag, 0.65)
 			
-	# Spawnar a Onda de Choque
+	# Instanciar a Onda de Choque com Anel de Poeira Expansivo
 	var sw_scene = load("res://scenes/enemies/shockwave.tscn")
 	if sw_scene:
 		var sw = sw_scene.instantiate()
 		get_parent().add_child(sw)
-		var impact_pos := global_position + (-global_transform.basis.z * 1.8)
+		var impact_pos := global_position + (-global_transform.basis.z * 1.9)
 		impact_pos.y = global_position.y + 0.1
 		sw.global_position = impact_pos
 		sw.damage = slam_damage
 
-## 2. Arremesso de Pedra à distância
+## 2. Arremesso de Pedregulho Gigante com Rastro de Poeira
 func _perform_rock_throw() -> void:
 	is_acting = true
 	current_state = State.THROW_WINDUP
@@ -217,30 +220,30 @@ func _perform_rock_throw() -> void:
 	throw_cooldown = randf_range(5.0, 7.5)
 	
 	var tween := create_tween()
-	# Abaixar braço direito até o chão para arrancar pedra
-	tween.tween_property(arm_r, "rotation_degrees:x", 85.0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(torso, "rotation_degrees:x", 15.0, 0.5)
+	# Abaixar braço direito para arrancar pedregulho do chão
+	tween.tween_property(arm_r, "rotation_degrees:x", 85.0, 0.48).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(torso, "rotation_degrees:x", 15.0, 0.48)
 	
-	# Arrancar do solo
+	# Som de quebra do solo
 	tween.tween_callback(func():
-		AudioSynth.play_sound(self, "rock_break", 1.0, 0.8)
+		AudioSynth.play_sound(self, "rock_break", 2.0, 0.85)
 	)
 	
-	# Puxar braço lá atrás preparando arremesso
-	tween.tween_property(arm_r, "rotation_degrees:x", -120.0, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(torso, "rotation_degrees:x", -10.0, 0.45)
+	# Puxar para trás em postura de lançamento
+	tween.tween_property(arm_r, "rotation_degrees:x", -125.0, 0.42).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(torso, "rotation_degrees:x", -12.0, 0.42)
 	
-	# Arremessar pedra com força para frente
+	# Lançar pedregulho gigante com rastro de poeira!
 	tween.tween_callback(func(): current_state = State.THROW_EXECUTE)
 	tween.tween_property(arm_r, "rotation_degrees:x", 45.0, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(torso, "rotation_degrees:x", 5.0, 0.18)
+	tween.parallel().tween_property(torso, "rotation_degrees:x", 6.0, 0.18)
 	
 	tween.tween_callback(func():
 		_execute_rock_projectile()
 	)
 	
-	# Retorno à postura normal
-	tween.tween_interval(0.3)
+	# Retorno à postura de perseguição
+	tween.tween_interval(0.35)
 	tween.tween_property(arm_r, "rotation_degrees:x", 0.0, 0.35)
 	tween.parallel().tween_property(torso, "rotation_degrees:x", 0.0, 0.35)
 	tween.tween_callback(func():
@@ -256,7 +259,7 @@ func _execute_rock_projectile() -> void:
 	if boulder_scene:
 		var b = boulder_scene.instantiate()
 		get_parent().add_child(b)
-		var spawn_pos := global_position + (-global_transform.basis.z * 2.0) + Vector3(0, 2.8, 0)
+		var spawn_pos := global_position + (-global_transform.basis.z * 2.1) + Vector3(0, 3.0, 0)
 		var target_pos := target_player.global_position + Vector3(0, 1.0, 0)
 		b.damage = throw_damage
 		b.launch(spawn_pos, target_pos)
@@ -266,14 +269,14 @@ func take_damage(amount: float, knockback_source = null, knockback_force: float 
 		return
 		
 	current_health -= amount
-	AudioSynth.play_sound(self, "hit", 1.0, randf_range(0.75, 0.95))
+	AudioSynth.play_sound(self, "hit", 2.0, randf_range(0.72, 0.90))
 	
 	_spawn_damage_number(amount)
 	
 	if health_bar:
 		health_bar.value = current_health
 		
-	# Golem tem alta resistência a knockback (apenas 10% do impacto recebido)
+	# Golem tem alta resistência a knockback (apenas 8% do impacto)
 	var source_pos: Vector3 = global_position - Vector3(0, 0, 1)
 	if knockback_source is Vector3:
 		source_pos = knockback_source
@@ -286,7 +289,7 @@ func take_damage(amount: float, knockback_source = null, knockback_force: float 
 		k_dir = k_dir.normalized()
 	else:
 		k_dir = -global_transform.basis.z
-	knockback_velocity = k_dir * (knockback_force * 0.12)
+	knockback_velocity = k_dir * (knockback_force * 0.08)
 	
 	_flash_rock()
 	
@@ -295,26 +298,31 @@ func take_damage(amount: float, knockback_source = null, knockback_force: float 
 
 func _flash_rock() -> void:
 	var flash_mat := StandardMaterial3D.new()
-	flash_mat.albedo_color = Color(1.0, 0.3, 0.3)
+	flash_mat.albedo_color = Color(1.0, 0.35, 0.35)
 	flash_mat.emission_enabled = true
-	flash_mat.emission = Color(0.9, 0.2, 0.1)
-	flash_mat.emission_energy_multiplier = 0.8
+	flash_mat.emission = Color(1.0, 0.25, 0.15)
+	flash_mat.emission_energy_multiplier = 1.8
 	
 	for m in mesh_instances:
 		m.material_override = flash_mat
 		
-	get_tree().create_timer(0.12).timeout.connect(func():
+	var tree := get_tree()
+	if tree:
+		tree.create_timer(0.12).timeout.connect(func():
+			for m in mesh_instances:
+				m.material_override = null
+		)
+	else:
 		for m in mesh_instances:
 			m.material_override = null
-	)
 
 func _spawn_damage_number(amount: float) -> void:
 	var ft_scene = load("res://scenes/ui/floating_text.tscn")
 	if ft_scene:
 		var ft = ft_scene.instantiate()
 		get_parent().add_child(ft)
-		ft.global_position = global_position + Vector3(0, 4.0, 0)
-		ft.setup(str(int(amount)), Color(1.0, 0.65, 0.1), true)
+		ft.global_position = global_position + Vector3(0, 4.2, 0)
+		ft.setup(str(int(amount)), Color(1.0, 0.70, 0.15), true)
 
 func _die() -> void:
 	current_state = State.DEAD
@@ -322,14 +330,14 @@ func _die() -> void:
 	collision_layer = 0
 	collision_mask = 1
 	
-	AudioSynth.play_sound(self, "golem_slam", 8.0, 0.6)
+	AudioSynth.play_sound(self, "golem_slam", 9.0, 0.55)
 	_drop_boss_treasures()
 	
-	# Animação de desmoronamento do golem
+	# Desmoronamento sísmico do golem
 	var tween := create_tween().set_parallel(true)
-	tween.tween_property(visual_root, "position:y", -2.0, 1.2).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
-	tween.tween_property(visual_root, "rotation_degrees:z", 35.0, 1.2)
-	tween.tween_property(visual_root, "scale", Vector3.ZERO, 0.5).set_delay(1.5)
+	tween.tween_property(visual_root, "position:y", -2.2, 1.4).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(visual_root, "rotation_degrees:z", 38.0, 1.4)
+	tween.tween_property(visual_root, "scale", Vector3.ZERO, 0.6).set_delay(1.6)
 	tween.chain().tween_callback(queue_free)
 
 func _drop_boss_treasures() -> void:
@@ -337,43 +345,43 @@ func _drop_boss_treasures() -> void:
 	if not drop_scene:
 		return
 		
-	# Chuva de moedas douradas (15 a 30)
-	var coins := randi_range(15, 30)
+	# Chuva de moedas douradas
+	var coins := randi_range(20, 35)
 	for i in range(coins):
 		var d = drop_scene.instantiate()
 		get_parent().add_child(d)
-		d.global_position = global_position + Vector3(randf_range(-1.0, 1.0), 1.5, randf_range(-1.0, 1.0))
+		d.global_position = global_position + Vector3(randf_range(-1.2, 1.2), 1.6, randf_range(-1.2, 1.2))
 		d.setup(DropItem.ItemType.COIN, 1)
 		
-	# Gemas raras: Rubis e Diamantes!
-	var rubies := randi_range(2, 4)
+	# Gemas raras: Rubis e Diamantes
+	var rubies := randi_range(2, 5)
 	for i in range(rubies):
 		var d = drop_scene.instantiate()
 		get_parent().add_child(d)
 		d.global_position = global_position + Vector3(randf_range(-1.5, 1.5), 2.0, randf_range(-1.5, 1.5))
 		d.setup(DropItem.ItemType.RUBY, 1)
 		
-	var diamonds := randi_range(1, 2)
+	var diamonds := randi_range(1, 3)
 	for i in range(diamonds):
 		var d = drop_scene.instantiate()
 		get_parent().add_child(d)
 		d.global_position = global_position + Vector3(randf_range(-1.5, 1.5), 2.2, randf_range(-1.5, 1.5))
 		d.setup(DropItem.ItemType.DIAMOND, 1)
 		
-	# Minérios de Ferro de alta qualidade
-	for i in range(4):
+	# Minérios de Ferro
+	for i in range(5):
 		var d = drop_scene.instantiate()
 		get_parent().add_child(d)
 		d.global_position = global_position + Vector3(randf_range(-1.0, 1.0), 1.8, randf_range(-1.0, 1.0))
-		d.setup(DropItem.ItemType.IRON_ORE, randi_range(2, 3))
+		d.setup(DropItem.ItemType.IRON_ORE, randi_range(2, 4))
 		
-	# E como recompensa máxima de chefe: Gera um Baú de Relíquia no local!
+	# Recompensa máxima: Baú Sheikah de Relíquia emerge do solo!
 	var chest_scene = load("res://scenes/environment/chest.tscn")
 	if chest_scene:
 		var chest = chest_scene.instantiate()
 		get_parent().add_child(chest)
 		chest.global_position = global_position + Vector3(0, 0.2, 0)
-		print("[Golem] Derrotado! Um Baú de Relíquia emergiu dos escombros!")
+		print("[Golem] Derrotado! Baú de Relíquia Sheikah emergiu com runas brilhantes!")
 
 func _find_player() -> void:
 	var players := get_tree().get_nodes_in_group("player")
@@ -383,13 +391,13 @@ func _find_player() -> void:
 func _animate_boss(delta: float) -> void:
 	var h_speed := Vector2(velocity.x, velocity.z).length()
 	if h_speed > 0.3 and is_on_floor() and not is_acting:
-		walk_phase += delta * 3.5
-		leg_l.rotation_degrees.x = sin(walk_phase) * 25.0
-		leg_r.rotation_degrees.x = -sin(walk_phase) * 25.0
-		arm_l.rotation_degrees.x = -sin(walk_phase) * 22.0
-		arm_r.rotation_degrees.x = sin(walk_phase) * 22.0
-		torso.rotation_degrees.z = sin(walk_phase) * 3.5
-		visual_root.position.y = abs(sin(walk_phase)) * 0.15
+		walk_phase += delta * 3.6
+		leg_l.rotation_degrees.x = sin(walk_phase) * 26.0
+		leg_r.rotation_degrees.x = -sin(walk_phase) * 26.0
+		arm_l.rotation_degrees.x = -sin(walk_phase) * 24.0
+		arm_r.rotation_degrees.x = sin(walk_phase) * 24.0
+		torso.rotation_degrees.z = sin(walk_phase) * 4.0
+		visual_root.position.y = abs(sin(walk_phase)) * 0.18
 	elif not is_acting and is_on_floor():
 		leg_l.rotation_degrees.x = move_toward(leg_l.rotation_degrees.x, 0.0, delta * 60.0)
 		leg_r.rotation_degrees.x = move_toward(leg_r.rotation_degrees.x, 0.0, delta * 60.0)

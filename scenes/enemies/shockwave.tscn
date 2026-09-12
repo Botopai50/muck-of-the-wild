@@ -3,22 +3,34 @@
 [ext_resource type="Script" path="res://scripts/enemies/shockwave.gd" id="1_sw"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_sw"]
-height = 0.8
-radius = 0.5
+height = 1.0
+radius = 0.6
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sw"]
 transparency = 1
-albedo_color = Color(1, 0.45, 0.1, 0.85)
+albedo_color = Color(0, 0.9, 1, 0.85)
 emission_enabled = true
-emission = Color(1, 0.35, 0.05, 1)
-emission_energy_multiplier = 2.0
+emission = Color(0, 0.85, 1, 1)
+emission_energy_multiplier = 3.0
 
 [sub_resource type="TorusMesh" id="TorusMesh_sw"]
 material = SubResource("StandardMaterial3D_sw")
-inner_radius = 0.82
+inner_radius = 0.85
 outer_radius = 1.0
-rings = 16
-ring_segments = 8
+rings = 24
+ring_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dust"]
+transparency = 1
+albedo_color = Color(0.76, 0.72, 0.62, 0.55)
+roughness = 0.95
+
+[sub_resource type="SphereMesh" id="SphereMesh_dust"]
+material = SubResource("StandardMaterial3D_dust")
+radius = 0.38
+height = 0.76
+radial_segments = 6
+rings = 4
 
 [node name="Shockwave" type="Area3D"]
 collision_layer = 0
@@ -26,9 +38,27 @@ collision_mask = 2
 script = ExtResource("1_sw")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("CylinderShape3D_sw")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 mesh = SubResource("TorusMesh_sw")
+
+[node name="DustRingParticles" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+emitting = false
+amount = 40
+lifetime = 0.75
+one_shot = true
+explosiveness = 0.92
+mesh = SubResource("SphereMesh_dust")
+direction = Vector3(0, 0.1, 0)
+spread = 180.0
+gravity = Vector3(0, -1.5, 0)
+initial_velocity_min = 8.0
+initial_velocity_max = 13.0
+damping_min = 6.0
+damping_max = 9.0
+scale_amount_min = 0.5
+scale_amount_max = 1.2

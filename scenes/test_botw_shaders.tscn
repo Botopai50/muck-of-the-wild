@@ -30,37 +30,37 @@ size = Vector2(10, 10)
 subdivide_width = 16
 subdivide_depth = 16
 
-[node name="TestBotwShaders" type="Node3D" unique_id=1726235864]
+[node name="TestBotwShaders" type="Node3D" unique_id=134927061]
 
-[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1643418228]
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1834012631]
 transform = Transform3D(0.8660254, -0.35355338, 0.35355338, 0, 0.70710677, 0.70710677, -0.5, -0.6123724, 0.6123724, 0, 0, 0)
 light_color = Color(1, 0.95, 0.85, 1)
 light_energy = 1.2
 shadow_enabled = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=943382874]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1312046357]
 environment = SubResource("Environment_nmt5w")
 
-[node name="CharacterSphere" type="MeshInstance3D" parent="." unique_id=1902798907]
+[node name="CharacterSphere" type="MeshInstance3D" parent="." unique_id=1242879908]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 0)
 material_override = ExtResource("2_1qum8")
 mesh = SubResource("SphereMesh_xvre0")
 
-[node name="RockBox" type="MeshInstance3D" parent="." unique_id=566604635]
+[node name="RockBox" type="MeshInstance3D" parent="." unique_id=2097788981]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, 0)
 material_override = ExtResource("3_8o3cm")
 mesh = SubResource("BoxMesh_efs8a")
 
-[node name="FoliageCluster" type="MeshInstance3D" parent="." unique_id=834005985]
+[node name="FoliageCluster" type="MeshInstance3D" parent="." unique_id=1092629389]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -2)
 material_override = ExtResource("4_e54pu")
 mesh = SubResource("SphereMesh_31rvr")
 
-[node name="GrassPlane" type="MeshInstance3D" parent="." unique_id=1523696929]
+[node name="GrassPlane" type="MeshInstance3D" parent="." unique_id=449740580]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 1)
 material_override = ExtResource("5_7q38k")
 mesh = SubResource("QuadMesh_24rkr")
 
-[node name="WaterPlane" type="MeshInstance3D" parent="." unique_id=1183479051]
+[node name="WaterPlane" type="MeshInstance3D" parent="." unique_id=1650240110]
 material_override = ExtResource("6_44nnq")
 mesh = SubResource("PlaneMesh_nfmx2")

@@ -1,4 +1,4 @@
-﻿class_name Inventory
+class_name Inventory
 extends Node
 
 ## Sistema de Inventário Completo estilo Muck + Zelda

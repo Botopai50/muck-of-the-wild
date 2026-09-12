@@ -76,6 +76,8 @@ var is_sprinting: bool = false
 var current_speed: float = 0.0
 var bob_cycle: float = 0.0
 var has_stepped_this_cycle: bool = false
+var was_on_floor: bool = true
+var prev_vertical_vel: float = 0.0
 
 # Mouse state
 var is_mouse_captured: bool = true
@@ -222,7 +224,16 @@ func _handle_movement(delta: float) -> void:
 	velocity.z = current_h_vel.z
 
 	current_speed = current_h_vel.length()
+	prev_vertical_vel = velocity.y
 	move_and_slide()
+
+	# Inércia de aterrissagem no viewmodel
+	if not was_on_floor and is_on_floor():
+		if viewmodel and viewmodel.has_method("apply_land_recoil"):
+			viewmodel.apply_land_recoil(abs(prev_vertical_vel))
+		if abs(prev_vertical_vel) > 6.0:
+			apply_camera_shake(0.12, 0.06)
+	was_on_floor = is_on_floor()
 
 func _try_jump() -> void:
 	if is_on_floor():
@@ -232,6 +243,8 @@ func _try_jump() -> void:
 		stamina_timer = stamina_regen_delay
 		stamina_changed.emit(stamina, max_stamina)
 		AudioManager.play_sound("jump", 0.05, 0.0)
+		if viewmodel and viewmodel.has_method("apply_jump_recoil"):
+			viewmodel.apply_jump_recoil()
 	elif air_jumps_left > 0:
 		# Double Jump (granted by Feather relic)
 		air_jumps_left -= 1
@@ -241,6 +254,8 @@ func _try_jump() -> void:
 		stamina_changed.emit(stamina, max_stamina)
 		# Higher pitched airy jump sound for feather relic
 		AudioManager.play_sound("jump", 0.08, 2.0)
+		if viewmodel and viewmodel.has_method("apply_jump_recoil"):
+			viewmodel.apply_jump_recoil()
 
 # ---------------------------------------------------------
 # Vital Stats Management
@@ -434,4 +449,12 @@ func _on_viewmodel_hit_frame(item_type: String) -> void:
 
 	if interaction_ray:
 		var dmg: float = viewmodel.get_damage() if viewmodel else 10.0
-		interaction_ray.apply_strike(item_type, dmg)
+		var is_heavy: bool = viewmodel.is_current_attack_heavy() if viewmodel and viewmodel.has_method("is_current_attack_heavy") else false
+		var hit_connected: bool = interaction_ray.apply_strike(item_type, dmg)
+		if hit_connected:
+			if viewmodel and viewmodel.has_method("apply_hit_recoil"):
+				viewmodel.apply_hit_recoil()
+			if is_heavy:
+				apply_camera_shake(0.28, 0.12)
+			else:
+				apply_camera_shake(0.12, 0.06)

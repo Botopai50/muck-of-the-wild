@@ -3,18 +3,37 @@
 [ext_resource type="Script" path="res://scripts/enemies/boulder.gd" id="1_bld"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_bld"]
-radius = 0.65
+radius = 0.7
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rock"]
-albedo_color = Color(0.48, 0.44, 0.4, 1)
-roughness = 0.9
+albedo_color = Color(0.44, 0.40, 0.36, 1)
+roughness = 0.92
 
 [sub_resource type="SphereMesh" id="SphereMesh_bld"]
 material = SubResource("StandardMaterial3D_rock")
-radius = 0.65
-height = 1.3
-radial_segments = 8
-rings = 6
+radius = 0.7
+height = 1.4
+radial_segments = 10
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dust"]
+transparency = 1
+albedo_color = Color(0.72, 0.67, 0.58, 0.45)
+roughness = 0.95
+
+[sub_resource type="SphereMesh" id="SphereMesh_trail"]
+material = SubResource("StandardMaterial3D_dust")
+radius = 0.32
+height = 0.64
+radial_segments = 6
+rings = 4
+
+[sub_resource type="SphereMesh" id="SphereMesh_impact"]
+material = SubResource("StandardMaterial3D_dust")
+radius = 0.45
+height = 0.9
+radial_segments = 6
+rings = 4
 
 [node name="Boulder" type="CharacterBody3D"]
 collision_layer = 0
@@ -26,3 +45,34 @@ shape = SubResource("SphereShape3D_bld")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_bld")
+
+[node name="DustTrailParticles" type="CPUParticles3D" parent="."]
+amount = 28
+lifetime = 0.45
+mesh = SubResource("SphereMesh_trail")
+emission_shape = 1
+emission_sphere_radius = 0.4
+direction = Vector3(0, 0.2, 0)
+spread = 35.0
+gravity = Vector3(0, -1.0, 0)
+initial_velocity_min = 0.5
+initial_velocity_max = 2.0
+scale_amount_min = 0.6
+scale_amount_max = 1.3
+
+[node name="ImpactParticles" type="CPUParticles3D" parent="."]
+emitting = false
+amount = 32
+lifetime = 0.55
+one_shot = true
+explosiveness = 0.95
+mesh = SubResource("SphereMesh_impact")
+direction = Vector3(0, 0.5, 0)
+spread = 180.0
+gravity = Vector3(0, -6.0, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 10.0
+damping_min = 4.0
+damping_max = 7.0
+scale_amount_min = 0.4
+scale_amount_max = 1.1

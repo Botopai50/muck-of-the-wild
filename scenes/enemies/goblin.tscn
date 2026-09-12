@@ -1,61 +1,62 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/goblin.gd" id="1_gob"]
+[ext_resource type="Material" path="res://materials/m_botw_cel_goblin.tres" id="2_gskin"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gob"]
-radius = 0.4
-height = 1.5
-
-[sub_resource type="StandardMaterial3D" id="Mat_Skin"]
-albedo_color = Color(0.3, 0.55, 0.22, 1)
-roughness = 0.6
+radius = 0.42
+height = 1.55
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_torso"]
-material = SubResource("Mat_Skin")
+material = ExtResource("2_gskin")
 radius = 0.28
 height = 0.7
 
 [sub_resource type="SphereMesh" id="SphereMesh_head"]
-material = SubResource("Mat_Skin")
-radius = 0.26
-height = 0.52
+material = ExtResource("2_gskin")
+radius = 0.27
+height = 0.54
 
-[sub_resource type="StandardMaterial3D" id="Mat_Eyes"]
+[sub_resource type="StandardMaterial3D" id="Mat_GlowingEyes"]
 albedo_color = Color(1, 0.85, 0.1, 1)
 emission_enabled = true
-emission = Color(1, 0.8, 0.1, 1)
-emission_energy_multiplier = 1.2
+emission = Color(1, 0.85, 0.05, 1)
+emission_energy_multiplier = 3.5
 
 [sub_resource type="SphereMesh" id="SphereMesh_eye"]
-material = SubResource("Mat_Eyes")
-radius = 0.06
-height = 0.12
+material = SubResource("Mat_GlowingEyes")
+radius = 0.065
+height = 0.13
 
 [sub_resource type="PrismMesh" id="PrismMesh_ear"]
-material = SubResource("Mat_Skin")
-size = Vector3(0.12, 0.25, 0.08)
+material = ExtResource("2_gskin")
+size = Vector3(0.12, 0.26, 0.08)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_arm"]
-material = SubResource("Mat_Skin")
+material = ExtResource("2_gskin")
 radius = 0.09
 height = 0.55
 
-[sub_resource type="StandardMaterial3D" id="Mat_Wood"]
-albedo_color = Color(0.42, 0.26, 0.14, 1)
-roughness = 0.8
+[sub_resource type="StandardMaterial3D" id="Mat_RusticWood"]
+albedo_color = Color(0.32, 0.20, 0.12, 1)
+roughness = 0.85
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_handle"]
-material = SubResource("Mat_Wood")
+material = SubResource("Mat_RusticWood")
 top_radius = 0.04
 bottom_radius = 0.04
-height = 0.6
+height = 0.65
+
+[sub_resource type="StandardMaterial3D" id="Mat_ClubHead"]
+albedo_color = Color(0.24, 0.16, 0.10, 1)
+roughness = 0.9
 
 [sub_resource type="BoxMesh" id="BoxMesh_club"]
-material = SubResource("Mat_Wood")
-size = Vector3(0.18, 0.35, 0.18)
+material = SubResource("Mat_ClubHead")
+size = Vector3(0.20, 0.38, 0.20)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_leg"]
-material = SubResource("Mat_Skin")
+material = ExtResource("2_gskin")
 radius = 0.1
 height = 0.55
 
@@ -68,7 +69,7 @@ collision_mask = 3
 script = ExtResource("1_gob")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.77, 0)
 shape = SubResource("CapsuleShape3D_gob")
 
 [node name="Visuals" type="Node3D" parent="."]
@@ -88,6 +89,12 @@ mesh = SubResource("SphereMesh_eye")
 [node name="EyeR" type="MeshInstance3D" parent="Visuals/Torso/Head"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.06, -0.22)
 mesh = SubResource("SphereMesh_eye")
+
+[node name="EyeGlow" type="OmniLight3D" parent="Visuals/Torso/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, -0.35)
+light_color = Color(1, 0.85, 0.2, 1)
+light_energy = 1.2
+omni_range = 3.5
 
 [node name="EarL" type="MeshInstance3D" parent="Visuals/Torso/Head"]
 transform = Transform3D(0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 1, -0.26, 0.06, 0)
@@ -118,8 +125,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.38, -0.15)
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 0.12, -0.1)
 mesh = SubResource("CylinderMesh_handle")
 
-[node name="Head" type="MeshInstance3D" parent="Visuals/Torso/ArmR/ClubPivot/Handle"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, 0)
+[node name="ClubHead" type="MeshInstance3D" parent="Visuals/Torso/ArmR/ClubPivot/Handle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 mesh = SubResource("BoxMesh_club")
 
 [node name="LegL" type="Node3D" parent="Visuals"]
@@ -137,7 +144,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
 mesh = SubResource("CapsuleMesh_leg")
 
 [node name="Sprite3D_HP" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0)
 billboard = 1
 double_sided = false
 no_depth_test = true

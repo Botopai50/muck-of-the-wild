@@ -1,4 +1,4 @@
-﻿class_name SoundGenerator
+class_name SoundGenerator
 extends RefCounted
 
 ## Gerador Procedural de Efeitos Sonoros para Muck of the Wild

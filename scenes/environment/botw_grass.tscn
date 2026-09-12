@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/botw_grass_system.gd" id="1_grass"]
+[ext_resource type="Material" path="res://materials/m_botw_grass.tres" id="2_mat"]
+
+[node name="BotWGrass" type="Node3D"]
+script = ExtResource("1_grass")
+grass_material = ExtResource("2_mat")
+grass_count = 14000
+island_radius = 73.0
+base_ground_y = 2.0

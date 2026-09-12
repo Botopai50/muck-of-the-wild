@@ -1,4 +1,4 @@
-﻿extends SceneTree
+extends SceneTree
 
 func _init():
 	var db = load("res://scripts/core/item_database.gd")
